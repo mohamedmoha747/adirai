@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+  border-radius: 1rem;
+  z-index: 0;
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold transition active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply btn bg-brand-700 text-white shadow-lg shadow-teal-900/10 hover:bg-brand-600;
+  }
+  .btn-accent {
+    @apply btn bg-ember-600 text-white hover:bg-ember-500;
+  }
+  .btn-outline {
+    @apply btn border border-stone-300 bg-white text-ink hover:border-brand-600 hover:text-brand-700;
+  }
+  .btn-ghost {
+    @apply btn text-stone-600 hover:bg-stone-100;
+  }
+  .input {
+    @apply w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm outline-none ring-brand-600/20 placeholder:text-stone-400 focus:border-brand-600 focus:ring-4;
+  }
+  .card {
+    @apply rounded-3xl border border-stone-200/80 bg-white shadow-card;
+  }
+  .label {
+    @apply mb-1.5 block text-xs font-semibold uppercase tracking-wide text-stone-500;
+  }
+}
