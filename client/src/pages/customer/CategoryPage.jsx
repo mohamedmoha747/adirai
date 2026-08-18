@@ -59,8 +59,8 @@ export function CategoryPage() {
 
           {/* Promotional Banner */}
           <PromotionalBanner
-            title="Free Delivery"
-            subtitle="On orders above ₹299"
+            title="Fast Delivery"
+            subtitle="For All Orders"
             cta="Shop Now"
             desktop={true}
           />

@@ -4,10 +4,10 @@ import { useNavigate } from 'react-router-dom';
 export function SplashScreen() {
   const navigate = useNavigate();
 
-  useEffect(() => {
+ /* useEffect(() => {
     const timer = setTimeout(() => navigate('/login'), 3000);
     return () => clearTimeout(timer);
-  }, [navigate]);
+  }, [navigate]); */
 
   return (
     <div className="am-screen">
