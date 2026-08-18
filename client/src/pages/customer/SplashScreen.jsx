@@ -4,10 +4,10 @@ import { useNavigate } from 'react-router-dom';
 export function SplashScreen() {
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const timer = setTimeout(() => navigate('/login'), 1800);
+ /* useEffect(() => {
+    const timer = setTimeout(() => navigate('/login'), 3000);
     return () => clearTimeout(timer);
-  }, [navigate]);
+  }, [navigate]); */
 
   return (
     <div className="am-screen">
@@ -18,10 +18,12 @@ export function SplashScreen() {
           </div>
           <div className="mt-5 text-3xl font-extrabold tracking-tight text-ink">Adirai Minutes</div>
           <div className="mt-3 text-[11px] font-bold uppercase tracking-[0.18em] text-brand-600">Fast • Safe • Trusted</div>
+
+          {/*THREE DOTS*/}
           <div className="mt-8 flex items-center justify-center gap-2">
-            <div className="h-2.5 w-2.5 animate-bounce rounded-full bg-brand-500 [animation-delay:0s]" />
-            <div className="h-2.5 w-2.5 animate-bounce rounded-full bg-brand-300 [animation-delay:150ms]" />
-            <div className="h-2.5 w-2.5 animate-bounce rounded-full bg-brand-200 [animation-delay:300ms]" />
+            <div className="h-2.5 w-2.5 animate-[pulse_2s_cubic-bezier(0.4,0,0.6,1)_infinite,bounce_1s_infinite] rounded-full bg-brand-500 [animation-delay:0s]" />
+            <div className="h-2.5 w-2.5 animate-[pulse_2s_cubic-bezier(0.4,0,0.6,1)_infinite,bounce_1s_infinite] rounded-full bg-brand-500 [animation-delay:150ms]" />
+            <div className="h-2.5 w-2.5 animate-[pulse_2s_cubic-bezier(0.4,0,0.6,1)_infinite,bounce_1s_infinite] rounded-full bg-brand-500 [animation-delay:300ms]" />
           </div>
         </div>
       </div>
