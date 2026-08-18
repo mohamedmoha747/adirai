@@ -1,44 +1,89 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import api from '../../services/api.js';
-import { StatusBadge } from '../../components/StatusBadge.jsx';
-import { formatDate, formatMoney } from '../../utils/format.js';
-import { getSocket } from '../../services/socket.js';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
+import { orders } from '../../data/mockData.js';
+import { AppHeader, OrderCard, Footer } from '../../components/UiLibrary.jsx';
 
 export function OrdersPage() {
-  const [orders, setOrders] = useState([]);
+  const navigate = useNavigate();
+  const [tab, setTab] = useState('All');
+  const tabs = ['All', 'Processing', 'Delivered', 'Cancelled'];
 
-  async function load() {
-    const { data } = await api.get('/orders');
-    setOrders(data.data.orders || []);
-  }
-
-  useEffect(() => {
-    load();
-    const socket = getSocket();
-    socket?.on('order:updated', load);
-    return () => socket?.off('order:updated', load);
-  }, []);
+  const filtered = orders.filter((order) => tab === 'All' || order.status === tab);
 
   return (
-    <div>
-      <h1 className="mb-4 font-display text-4xl">Your orders</h1>
-      <div className="space-y-3">
-        {orders.map((order) => (
-          <Link key={order._id} to={`/track/${order.orderNumber}`} className="card flex flex-wrap items-center justify-between gap-3 p-4">
-            <div>
-              <div className="font-semibold">{order.orderNumber}</div>
-              <div className="text-sm text-stone-500">{order.shop?.name} · {formatDate(order.createdAt)}</div>
-            </div>
-            <div className="flex items-center gap-3">
-              <span className="font-bold">{formatMoney(order.totalAmount)}</span>
-              <StatusBadge status={order.orderStatus} />
-              <StatusBadge status={order.paymentStatus} />
-            </div>
-          </Link>
-        ))}
-        {orders.length === 0 && <p className="text-stone-500">No orders yet.</p>}
+    <div className="am-content">
+      {/* Mobile Header */}
+      <div className="sticky top-0 z-30 border-b border-soft-200 bg-white md:hidden">
+        <AppHeader title="My Orders" onBack={() => navigate('/home')} />
       </div>
+
+      {/* Desktop Header */}
+      <div className="hidden border-b border-soft-200 bg-white md:block">
+        <div className="am-container py-6">
+          <button
+            type="button"
+            onClick={() => navigate('/home')}
+            className="mb-4 flex items-center gap-2 text-sm font-semibold text-brand-700 transition hover:text-brand-800"
+          >
+            <ArrowLeft size={18} />
+            Back to Home
+          </button>
+          <h1 className="text-3xl font-extrabold text-ink">My Orders</h1>
+        </div>
+      </div>
+
+      <div className="pb-24 md:pb-6">
+        <div className="am-container py-6 md:py-8">
+          {/* Tabs */}
+          <div className="mb-6 flex gap-2 overflow-x-auto md:mb-8 md:gap-3">
+            {tabs.map((item) => (
+              <button
+                key={item}
+                type="button"
+                className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-bold transition md:px-5 md:py-2.5 ${
+                  tab === item
+                    ? 'bg-brand-600 text-white'
+                    : 'bg-white text-soft-600 shadow-sm hover:bg-soft-50'
+                }`}
+                onClick={() => setTab(item)}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+
+          {/* Orders Grid - Desktop */}
+          <div className="hidden grid gap-4 md:grid md:grid-cols-2 lg:grid-cols-3">
+            {filtered.map((order) => (
+              <OrderCard
+                key={order.id}
+                order={order}
+                onReorder={() => navigate('/track/' + order.id)}
+                onView={() => navigate('/track/' + order.id)}
+              />
+            ))}
+          </div>
+
+          {/* Orders List - Mobile */}
+          <div className="space-y-3 md:hidden">
+            {filtered.map((order) => (
+              <OrderCard
+                key={order.id}
+                order={order}
+                onReorder={() => navigate('/track/' + order.id)}
+                onView={() => navigate('/track/' + order.id)}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile bottom nav spacing */}
+      <div className="h-20 md:hidden" />
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }

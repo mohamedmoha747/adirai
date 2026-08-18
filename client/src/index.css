@@ -1,11 +1,51 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --am-purple-1: #5a2ac6;
+  --am-purple-2: #7d3ee8;
+  --am-purple-3: #4a1eb6;
+  --am-cyan: #38d1ea;
+  --am-bg: #f4f5f8;
+  --am-card: #ffffff;
+  --am-border: rgba(23, 23, 29, 0.08);
+  --am-text: #18191f;
+  --am-muted: #72809a;
+  --am-success: #2fbf9a;
+  --am-warning: #f7b955;
+  --am-danger: #ef5a5a;
+}
 
 html,
 body,
 #root {
   min-height: 100%;
+  font-family: 'Manrope', system-ui, sans-serif;
+  background: linear-gradient(180deg, #f0f0f4 0%, #f7f7fb 100%);
+  color: var(--am-text);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+body {
+  margin: 0;
+}
+
+img {
+  max-width: 100%;
+  display: block;
 }
 
 .leaflet-container {
@@ -16,28 +56,103 @@ body,
 }
 
 @layer components {
+  .am-shell {
+    @apply mx-auto w-full max-w-[430px] overflow-hidden rounded-[2rem] border border-white/60 bg-white shadow-[0_18px_60px_-28px_rgba(71,32,146,0.4)];
+  }
+
+  .am-screen {
+    @apply min-h-screen bg-[#f5f5f8] p-3 md:p-5;
+  }
+
+  .am-screen-inner {
+    @apply mx-auto max-w-[430px] overflow-hidden bg-[#f7f7fb];
+  }
+
+  /* Desktop-first responsive layout */
+  .am-container {
+    @apply mx-auto w-full max-w-7xl px-4 py-6 md:px-6 lg:px-8;
+  }
+
+  .am-content {
+    @apply min-h-screen bg-[#f7f7fb];
+  }
+
+  .am-card {
+    @apply rounded-[1.5rem] border border-[rgba(23,23,29,0.08)] bg-white shadow-soft;
+  }
+
+  .am-card-lg {
+    @apply rounded-2xl border border-[rgba(23,23,29,0.08)] bg-white shadow-soft;
+  }
+
+  .am-pill {
+    @apply inline-flex items-center justify-center rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em];
+  }
+
   .btn {
     @apply inline-flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold transition active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50;
   }
+
   .btn-primary {
-    @apply btn bg-brand-700 text-white shadow-lg shadow-teal-900/10 hover:bg-brand-600;
+    @apply btn bg-gradient-to-r from-brand-600 to-brand-500 text-white shadow-[0_12px_28px_-14px_rgba(101,56,195,0.9)];
   }
-  .btn-accent {
-    @apply btn bg-ember-600 text-white hover:bg-ember-500;
+
+  .btn-secondary {
+    @apply btn border border-brand-200 bg-white text-brand-700;
   }
+
   .btn-outline {
-    @apply btn border border-stone-300 bg-white text-ink hover:border-brand-600 hover:text-brand-700;
+    @apply btn border border-soft-200 bg-white text-soft-600;
   }
-  .btn-ghost {
-    @apply btn text-stone-600 hover:bg-stone-100;
+
+  .btn-soft {
+    @apply btn bg-[#f0ebff] text-brand-700;
   }
+
   .input {
-    @apply w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm outline-none ring-brand-600/20 placeholder:text-stone-400 focus:border-brand-600 focus:ring-4;
+    @apply w-full rounded-2xl border border-soft-200 bg-white px-4 py-3 text-sm text-ink outline-none placeholder:text-soft-400 focus:border-brand-500 focus:ring-4 focus:ring-brand-100;
   }
-  .card {
-    @apply rounded-3xl border border-stone-200/80 bg-white shadow-card;
-  }
+
   .label {
-    @apply mb-1.5 block text-xs font-semibold uppercase tracking-wide text-stone-500;
+    @apply mb-1.5 block text-[10px] font-semibold uppercase tracking-[0.15em] text-soft-500;
+  }
+
+  .section-head {
+    @apply flex items-center justify-between text-[13px] font-bold text-soft-600;
+  }
+
+  .section-title {
+    @apply text-2xl font-extrabold text-ink md:text-3xl;
+  }
+
+  .purple-gradient {
+    background: linear-gradient(135deg, #5a2ac6 0%, #8649f0 52%, #31d4e6 100%);
+  }
+
+  .am-dot {
+    @apply h-2.5 w-2.5 rounded-full bg-brand-500;
+  }
+
+  /* Desktop responsive grids */
+  .product-grid {
+    @apply grid gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5;
+  }
+
+  .category-grid {
+    @apply grid gap-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8;
+  }
+
+  .hero-banner {
+    @apply min-h-[300px] rounded-2xl md:min-h-[400px];
+  }
+
+  /* Mobile-first footer nav (hidden on desktop) */
+  .bottom-nav {
+    @apply fixed bottom-0 left-0 right-0 z-40 border-t border-soft-200 bg-white/95 backdrop-blur-sm md:hidden;
+  }
+
+  /* Adjust main content based on screen size */
+  .main-content {
+    @apply pb-24 md:pb-6;
   }
 }

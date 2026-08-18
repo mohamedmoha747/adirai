@@ -1,76 +1,117 @@
-import { useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import api from '../../services/api.js';
-import { ProductCard } from '../../components/Cards.jsx';
+import { Search, SlidersHorizontal, ArrowLeft, X } from 'lucide-react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { categories, products } from '../../data/mockData.js';
+import { ProductCard, CategoryCard } from '../../components/UiLibrary.jsx';
 
 export function ProductsPage() {
-  const [params, setParams] = useSearchParams();
-  const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [shops, setShops] = useState([]);
-
-  const filters = useMemo(
-    () => ({
-      search: params.get('search') || '',
-      category: params.get('category') || '',
-      shop: params.get('shop') || '',
-      minPrice: params.get('minPrice') || '',
-      maxPrice: params.get('maxPrice') || '',
-    }),
-    [params],
-  );
-
-  function setFilter(key, value) {
-    const next = new URLSearchParams(params);
-    if (value) next.set(key, value);
-    else next.delete(key);
-    setParams(next);
-  }
-
-  useEffect(() => {
-    api.get('/shops').then(({ data }) => setShops(data.data.shops || []));
-  }, []);
-
-  useEffect(() => {
-    api.get('/products', { params: filters }).then(({ data }) => {
-      setProducts(data.data.products || []);
-      setCategories(data.data.categories || []);
-    });
-  }, [filters.search, filters.category, filters.shop, filters.minPrice, filters.maxPrice]);
+  const [params] = useSearchParams();
+  const navigate = useNavigate();
+  const selectedCategory = params.get('category') || 'grocery';
+  const filteredProducts = products.filter((product) => product.category.toLowerCase().includes(selectedCategory.toLowerCase().replace('-', ' ')) || selectedCategory === 'all');
 
   return (
-    <div className="grid gap-6 md:grid-cols-[240px_1fr]">
-      <aside className="card h-fit space-y-4 p-4">
-        <h2 className="font-semibold">Filters</h2>
-        <input className="input" placeholder="Search" value={filters.search} onChange={(e) => setFilter('search', e.target.value)} />
-        <select className="input" value={filters.category} onChange={(e) => setFilter('category', e.target.value)}>
-          <option value="">All categories</option>
-          {categories.map((c) => (
-            <option key={c}>{c}</option>
-          ))}
-        </select>
-        <select className="input" value={filters.shop} onChange={(e) => setFilter('shop', e.target.value)}>
-          <option value="">All shops</option>
-          {shops.map((s) => (
-            <option key={s._id} value={s._id}>
-              {s.name}
-            </option>
-          ))}
-        </select>
-        <div className="grid grid-cols-2 gap-2">
-          <input className="input" placeholder="Min ₹" value={filters.minPrice} onChange={(e) => setFilter('minPrice', e.target.value)} />
-          <input className="input" placeholder="Max ₹" value={filters.maxPrice} onChange={(e) => setFilter('maxPrice', e.target.value)} />
+    <div className="am-content">
+      {/* Mobile Header */}
+      <header className="sticky top-0 z-30 border-b border-soft-200 bg-white px-3 py-4 md:hidden">
+        <div className="flex items-center gap-3">
+          <button type="button" className="grid h-9 w-9 place-items-center rounded-full bg-white text-soft-600 shadow-sm" onClick={() => navigate('/home')}>
+            <ArrowLeft size={18} />
+          </button>
+          <div className="flex-1 rounded-full bg-white px-3 py-2 shadow-sm">
+            <div className="flex items-center gap-2 text-soft-500">
+              <Search size={16} />
+              <input className="w-full border-0 bg-transparent text-sm outline-none" placeholder="Search" defaultValue="" />
+            </div>
+          </div>
+          <button type="button" className="grid h-9 w-9 place-items-center rounded-full bg-white text-soft-600 shadow-sm">
+            <SlidersHorizontal size={16} />
+          </button>
         </div>
-      </aside>
-      <div>
-        <h1 className="mb-4 font-display text-4xl">Products</h1>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {products.map((p) => (
-            <ProductCard key={p._id} product={p} />
-          ))}
+      </header>
+
+      <main className="relative">
+        {/* Desktop View */}
+        <div className="hidden md:block">
+          <div className="border-b border-soft-200 bg-white py-6">
+            <div className="am-container">
+              <h1 className="mb-4 text-3xl font-extrabold text-ink">Shop Products</h1>
+              <div className="flex items-center gap-3">
+                <div className="flex-1 rounded-full bg-soft-50 px-4 py-2.5">
+                  <div className="flex items-center gap-2 text-soft-500">
+                    <Search size={18} />
+                    <input
+                      className="w-full border-0 bg-transparent text-sm outline-none"
+                      placeholder="Search products..."
+                    />
+                  </div>
+                </div>
+                <button className="flex h-10 w-10 items-center justify-center rounded-full bg-soft-100 text-soft-600 transition hover:bg-soft-200">
+                  <SlidersHorizontal size={18} />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="am-container py-8">
+            <div className="category-grid mb-8">
+              <CategoryCard
+                key="all"
+                category={{ id: 'all', name: 'All', icon: '⭐' }}
+                selected={selectedCategory === 'all'}
+                onClick={() => navigate('/products?category=all')}
+              />
+              {categories.map((category) => (
+                <CategoryCard
+                  key={category.id}
+                  category={category}
+                  selected={selectedCategory === category.id}
+                  onClick={() => navigate(`/products?category=${category.id}`)}
+                />
+              ))}
+            </div>
+
+            <div className="product-grid">
+              {filteredProducts.map((product) => (
+                <ProductCard key={product.id} product={product} onAdd={() => navigate(`/products/${product.id}`)} />
+              ))}
+            </div>
+          </div>
         </div>
-        {products.length === 0 && <p className="text-stone-500">No products match those filters.</p>}
-      </div>
+
+        {/* Mobile View */}
+        <div className="space-y-4 md:hidden">
+          <div className="px-3 pb-4 pt-4">
+            <div className="mb-4 flex gap-2 overflow-x-auto pb-2">
+              <button
+                type="button"
+                className={`whitespace-nowrap rounded-full px-3 py-2 text-[11px] font-bold ${selectedCategory === 'all' ? 'bg-brand-600 text-white' : 'bg-white text-soft-600 shadow-sm'}`}
+                onClick={() => navigate('/products?category=all')}
+              >
+                All
+              </button>
+              {categories.map((category) => (
+                <button
+                  key={category.id}
+                  type="button"
+                  className={`whitespace-nowrap rounded-full px-3 py-2 text-[11px] font-bold ${selectedCategory === category.id ? 'bg-brand-600 text-white' : 'bg-white text-soft-600 shadow-sm'}`}
+                  onClick={() => navigate(`/products?category=${category.id}`)}
+                >
+                  {category.name}
+                </button>
+              ))}
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              {filteredProducts.map((product) => (
+                <ProductCard key={product.id} product={product} onAdd={() => navigate(`/products/${product.id}`)} />
+              ))}
+            </div>
+          </div>
+        </div>
+      </main>
+
+      {/* Mobile bottom nav spacing */}
+      <div className="h-20 md:hidden" />
     </div>
   );
 }
