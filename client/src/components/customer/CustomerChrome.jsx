@@ -2,11 +2,13 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { Bell, MapPin, Search, ShoppingBag, UserRound, Package } from 'lucide-react';
 import { useCart } from '../../context/CartContext.jsx';
 import { useSession } from '../../context/SessionContext.jsx';
+import { formatAddressShort, useAddress } from '../../context/AddressContext.jsx';
 
 export function CustomerHeader() {
   const navigate = useNavigate();
   const { count } = useCart();
   const { user } = useSession();
+  const { selectedAddress } = useAddress();
 
   return (
     <header className="sticky top-0 z-50 border-b border-soft-200 bg-white">
@@ -21,14 +23,17 @@ export function CustomerHeader() {
           </div>
         </Link>
 
-        <button
-          type="button"
-          className="hidden items-center gap-2 rounded-lg border border-soft-200 bg-soft-50 px-3 py-2 text-xs font-semibold text-ink lg:flex"
+        <Link
+          to="/customer/addresses"
+          className="hidden items-center gap-2 rounded-lg border border-soft-200 bg-soft-50 px-3 py-2 text-xs font-semibold text-ink hover:border-brand-300 hover:bg-brand-50 lg:flex"
+          title="Change delivery location"
         >
           <MapPin size={14} className="text-brand-600" />
           <span className="text-soft-500">Deliver to</span>
-          <span>Anna Nagar</span>
-        </button>
+          <span className="max-w-[14rem] truncate">
+            {selectedAddress ? formatAddressShort(selectedAddress) : 'Add an address'}
+          </span>
+        </Link>
 
         <form
           className="hidden flex-1 md:block"
@@ -55,9 +60,13 @@ export function CustomerHeader() {
           <NavLink to="/customer/orders" className="hidden rounded-lg px-3 py-2 text-sm font-semibold text-soft-600 hover:bg-soft-50 hover:text-brand-700 md:inline">
             Orders
           </NavLink>
-          <button type="button" className="relative rounded-lg p-2 text-soft-600 hover:bg-soft-50">
+          <Link
+            to="/customer/notifications"
+            className="relative rounded-lg p-2 text-soft-600 hover:bg-soft-50"
+            aria-label="Notifications"
+          >
             <Bell size={20} />
-          </button>
+          </Link>
           <Link to="/customer/cart" className="relative rounded-lg p-2 text-soft-600 hover:bg-soft-50">
             <ShoppingBag size={20} />
             {count > 0 && (

@@ -2,7 +2,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { CustomerLayout } from './layouts/CustomerLayout.jsx';
 import { DeliveryLayout, DeliveryAuthLayout } from './layouts/DeliveryLayout.jsx';
 import { AdminLayout, AdminAuthLayout } from './layouts/AdminLayout.jsx';
-import { RequireRole, GuestOnly } from './routes/SessionRoute.jsx';
+import { RequireRole, GuestOnly, PortalGuard } from './routes/SessionRoute.jsx';
 
 import { CustomerLoginPage } from './pages/customer/auth/CustomerLoginPage.jsx';
 import { CustomerRegisterPage } from './pages/customer/auth/CustomerRegisterPage.jsx';
@@ -48,8 +48,6 @@ import {
   AdminDashboardPage,
   AdminCustomersPage,
   AdminDeliveryPartnersPage,
-  AdminProductsPage,
-  AdminCategoriesPage,
   AdminOrdersPage,
   AdminOrderDetailPage,
   AdminPaymentsPage,
@@ -61,6 +59,8 @@ import {
   AdminSettingsPage,
   AdminProfilePage,
 } from './pages/admin/AdminPortal.jsx';
+import { AdminCategoriesPage } from './pages/admin/AdminCategoriesPage.jsx';
+import { AdminProductsPage } from './pages/admin/AdminProductsPage.jsx';
 
 export default function App() {
   return (
@@ -68,33 +68,45 @@ export default function App() {
       <Route path="/" element={<SplashScreen />} />
 
       {/* Customer website */}
-      <Route path="/customer" element={<CustomerLayout />}>
-        <Route index element={<LandingPage />} />
-        <Route path="login" element={<CustomerLoginPage />} />
-        <Route path="register" element={<CustomerRegisterPage />} />
-        <Route path="forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="verify-otp" element={<VerifyOtpPage />} />
-        <Route path="home" element={<HomePage />} />
-        <Route path="categories" element={<CategoryPage />} />
-        <Route path="products" element={<ProductsPage />} />
-        <Route path="products/:id" element={<ProductDetailPage />} />
-        <Route path="search" element={<SearchResultsPage />} />
-        <Route path="cart" element={<CartPage />} />
-        <Route path="checkout" element={<CheckoutPage />} />
-        <Route path="order-confirmation/:orderId" element={<OrderConfirmationPage />} />
-        <Route path="orders" element={<OrdersPage />} />
-        <Route path="orders/:id" element={<OrderDetailsPage />} />
-        <Route path="track" element={<TrackPage />} />
-        <Route path="track/:orderNumber" element={<TrackPage />} />
-        <Route path="profile" element={<ProfilePage />} />
-        <Route path="addresses" element={<AddressPage />} />
-        <Route path="payment-methods" element={<PaymentMethodsPage />} />
-        <Route path="notifications" element={<NotificationsPage />} />
-        <Route path="help" element={<HelpSupportPage />} />
-        <Route path="about" element={<AboutPage />} />
+      <Route path="/customer" element={<PortalGuard portal="CUSTOMER" />}>
+        <Route element={<CustomerLayout />}>
+          <Route index element={<LandingPage />} />
+
+          {/* Public storefront */}
+          <Route element={<GuestOnly role="CUSTOMER" redirectTo="/customer/home" />}>
+            <Route path="login" element={<CustomerLoginPage />} />
+            <Route path="register" element={<CustomerRegisterPage />} />
+          </Route>
+          <Route path="forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="verify-otp" element={<VerifyOtpPage />} />
+          <Route path="home" element={<HomePage />} />
+          <Route path="categories" element={<CategoryPage />} />
+          <Route path="products" element={<ProductsPage />} />
+          <Route path="products/:id" element={<ProductDetailPage />} />
+          <Route path="search" element={<SearchResultsPage />} />
+          <Route path="cart" element={<CartPage />} />
+          <Route path="track" element={<TrackPage />} />
+          <Route path="track/:orderNumber" element={<TrackPage />} />
+          <Route path="help" element={<HelpSupportPage />} />
+          <Route path="about" element={<AboutPage />} />
+
+          {/* Customer account area */}
+          <Route element={<RequireRole role="CUSTOMER" />}>
+            <Route path="checkout" element={<CheckoutPage />} />
+            <Route path="order-confirmation/:orderId" element={<OrderConfirmationPage />} />
+            <Route path="orders" element={<OrdersPage />} />
+            <Route path="orders/:id" element={<OrderDetailsPage />} />
+            <Route path="profile" element={<ProfilePage />} />
+            <Route path="addresses" element={<AddressPage />} />
+            <Route path="payment-methods" element={<PaymentMethodsPage />} />
+            <Route path="notifications" element={<NotificationsPage />} />
+          </Route>
+        </Route>
       </Route>
 
       {/* Delivery partner portal */}
+      {/* Login/register stay reachable from the public landing page; RequireRole below
+          keeps the portal itself limited to delivery partners. */}
       <Route path="/delivery">
         <Route element={<GuestOnly role="DELIVERY_PARTNER" redirectTo="/delivery/dashboard" />}>
           <Route element={<DeliveryAuthLayout />}>
@@ -118,7 +130,7 @@ export default function App() {
       </Route>
 
       {/* Admin console */}
-      <Route path="/admin">
+      <Route path="/admin" element={<PortalGuard portal="ADMIN" />}>
         <Route element={<GuestOnly role="ADMIN" redirectTo="/admin/dashboard" />}>
           <Route element={<AdminAuthLayout />}>
             <Route path="login" element={<AdminLoginPage />} />

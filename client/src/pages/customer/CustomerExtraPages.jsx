@@ -42,9 +42,6 @@ export function LandingPage() {
               <button type="button" className="btn btn-secondary px-8" onClick={() => navigate('/delivery/login')}>
                 Delivery Partner
               </button>
-              <Link to="/admin/login" className="btn btn-secondary px-8 inline-flex items-center justify-center">
-                Admin Console
-              </Link>
             </div>
           </div>
           <div className="rounded-2xl border border-soft-200 bg-white p-8 shadow-sm">

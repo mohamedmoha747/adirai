@@ -6,6 +6,8 @@ import { CartProvider } from './context/CartContext.jsx';
 import { SessionProvider } from './context/SessionContext.jsx';
 import { ThemeProvider } from './context/ThemeContext.jsx';
 import { AddressProvider } from './context/AddressContext.jsx';
+import { CatalogProvider } from './context/CatalogContext.jsx';
+import { ToastProvider } from './context/ToastContext.jsx';
 import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -13,11 +15,15 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <BrowserRouter>
       <ThemeProvider>
         <SessionProvider>
-          <AddressProvider>
-            <CartProvider>
-              <App />
-            </CartProvider>
-          </AddressProvider>
+          <ToastProvider>
+            <CatalogProvider>
+              <AddressProvider>
+                <CartProvider>
+                  <App />
+                </CartProvider>
+              </AddressProvider>
+            </CatalogProvider>
+          </ToastProvider>
         </SessionProvider>
       </ThemeProvider>
     </BrowserRouter>

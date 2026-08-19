@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { adminStats, categories, customers, deliveryPartners, orders, products } from '../../data/mockData.js';
+import { adminStats, customers, deliveryPartners, orders } from '../../data/mockData.js';
 import { useSession } from '../../context/SessionContext.jsx';
+import { useCatalog } from '../../context/CatalogContext.jsx';
 import { StatCard } from '../../components/Cards.jsx';
 import { StatusBadge } from '../../components/StatusBadge.jsx';
 import { AuthCard, AuthShell, AuthSecureNote } from '../../components/auth/AuthLayout.jsx';
@@ -81,6 +82,7 @@ export function AdminLoginPage() {
 
 export function AdminDashboardPage() {
   const s = adminStats;
+  const { products, categories } = useCatalog();
 
   return (
     <div className="space-y-6">
@@ -92,8 +94,8 @@ export function AdminDashboardPage() {
         <StatCard label="Revenue" value={formatMoney(s.revenue)} />
         <StatCard label="Active Deliveries" value={s.activeDeliveries} />
         <StatCard label="Delivery Partners" value={s.deliveryPartners} />
-        <StatCard label="Products" value={s.products} />
-        <StatCard label="Categories" value={s.categories} />
+        <StatCard label="Products" value={products.length} />
+        <StatCard label="Categories" value={categories.length} />
       </div>
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="rounded-xl border border-slate-200 bg-white p-5">
@@ -169,51 +171,6 @@ export function AdminDeliveryPartnersPage() {
             <p className="mt-2 text-sm text-slate-600">{p.phone}</p>
             <p className="text-sm text-slate-600">{p.vehicle} · {p.vehicleNo}</p>
             <p className="mt-3 text-sm font-semibold">Today: {p.todayDeliveries} deliveries · ₹{p.earnings}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-export function AdminProductsPage() {
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-extrabold">Products</h1>
-        <button type="button" className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white">Add Product</button>
-      </div>
-      <TableShell>
-        <table className="min-w-full text-sm">
-          <thead className="bg-slate-50 text-left text-xs uppercase text-slate-500">
-            <tr><th className="px-4 py-3">Product</th><th className="px-4 py-3">Category</th><th className="px-4 py-3">Price</th><th className="px-4 py-3">Stock</th><th className="px-4 py-3">Status</th></tr>
-          </thead>
-          <tbody>
-            {products.map((p) => (
-              <tr key={p.id} className="border-t border-slate-100">
-                <td className="px-4 py-3 font-semibold">{p.name}</td>
-                <td className="px-4 py-3">{p.category}</td>
-                <td className="px-4 py-3">₹{p.price}</td>
-                <td className="px-4 py-3">{p.stock}</td>
-                <td className="px-4 py-3"><StatusBadge status={p.inStock ? 'ACCEPTED' : 'CANCELLED'} /></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </TableShell>
-    </div>
-  );
-}
-
-export function AdminCategoriesPage() {
-  return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-extrabold">Categories</h1>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {categories.map((c) => (
-          <div key={c.id} className="rounded-xl border border-slate-200 bg-white p-4 text-center">
-            <div className="text-3xl">{c.icon}</div>
-            <p className="mt-2 font-bold">{c.name}</p>
           </div>
         ))}
       </div>

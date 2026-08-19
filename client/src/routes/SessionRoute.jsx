@@ -13,16 +13,40 @@ const HOME = {
   ADMIN: '/admin/dashboard',
 };
 
-export function RequireRole({ role }) {
-  const { user } = useSession();
-  const location = useLocation();
+/** Where a signed-in user belongs, or null for roles without a portal of their own. */
+function homeFor(user) {
+  return (user?.role && HOME[user.role]) || null;
+}
 
-  if (!user || user.role !== role) {
-    return <Navigate to={LOGIN[role]} replace state={{ from: location }} />;
+/**
+ * Keeps a whole portal (customer / delivery / admin) sealed off from the other
+ * roles. Guests pass through so public pages and login screens stay reachable.
+ */
+export function PortalGuard({ portal }) {
+  const { user } = useSession();
+  const home = homeFor(user);
+
+  if (user && home && user.role !== portal) {
+    return <Navigate to={home} replace />;
   }
   return <Outlet />;
 }
 
+/** Requires a signed-in user with the given role. */
+export function RequireRole({ role }) {
+  const { user } = useSession();
+  const location = useLocation();
+
+  if (!user) {
+    return <Navigate to={LOGIN[role]} replace state={{ from: location }} />;
+  }
+  if (user.role !== role) {
+    return <Navigate to={homeFor(user) || LOGIN[role]} replace />;
+  }
+  return <Outlet />;
+}
+
+/** Hides login/register screens from users who are already signed in. */
 export function GuestOnly({ role, redirectTo }) {
   const { user } = useSession();
   if (user?.role === role) {
