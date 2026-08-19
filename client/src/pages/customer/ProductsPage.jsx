@@ -2,10 +2,12 @@ import { Search, SlidersHorizontal, ArrowLeft, X } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { categories, products } from '../../data/mockData.js';
 import { ProductCard, CategoryCard } from '../../components/UiLibrary.jsx';
+import { useCart } from '../../context/CartContext.jsx';
 
 export function ProductsPage() {
   const [params] = useSearchParams();
   const navigate = useNavigate();
+  const { addToCart } = useCart();
   const selectedCategory = params.get('category') || 'grocery';
   const filteredProducts = products.filter((product) => product.category.toLowerCase().includes(selectedCategory.toLowerCase().replace('-', ' ')) || selectedCategory === 'all');
 
@@ -14,7 +16,7 @@ export function ProductsPage() {
       {/* Mobile Header */}
       <header className="sticky top-0 z-30 border-b border-soft-200 bg-white px-3 py-4 md:hidden">
         <div className="flex items-center gap-3">
-          <button type="button" className="grid h-9 w-9 place-items-center rounded-full bg-white text-soft-600 shadow-sm" onClick={() => navigate('/home')}>
+          <button type="button" className="grid h-9 w-9 place-items-center rounded-full bg-white text-soft-600 shadow-sm" onClick={() => navigate('/customer/home')}>
             <ArrowLeft size={18} />
           </button>
           <div className="flex-1 rounded-full bg-white px-3 py-2 shadow-sm">
@@ -58,21 +60,21 @@ export function ProductsPage() {
                 key="all"
                 category={{ id: 'all', name: 'All', icon: '⭐' }}
                 selected={selectedCategory === 'all'}
-                onClick={() => navigate('/products?category=all')}
+                onClick={() => navigate('/customer/products?category=all')}
               />
               {categories.map((category) => (
                 <CategoryCard
                   key={category.id}
                   category={category}
                   selected={selectedCategory === category.id}
-                  onClick={() => navigate(`/products?category=${category.id}`)}
+                  onClick={() => navigate(`/customer/products?category=${category.id}`)}
                 />
               ))}
             </div>
 
             <div className="product-grid">
               {filteredProducts.map((product) => (
-                <ProductCard key={product.id} product={product} onAdd={() => navigate(`/products/${product.id}`)} />
+                <ProductCard key={product.id} product={product} onAdd={() => (product.inStock ? addToCart(product.id, 1) : navigate(`/customer/products/${product.id}`))} />
               ))}
             </div>
           </div>
@@ -85,7 +87,7 @@ export function ProductsPage() {
               <button
                 type="button"
                 className={`whitespace-nowrap rounded-full px-3 py-2 text-[11px] font-bold ${selectedCategory === 'all' ? 'bg-brand-600 text-white' : 'bg-white text-soft-600 shadow-sm'}`}
-                onClick={() => navigate('/products?category=all')}
+                onClick={() => navigate('/customer/products?category=all')}
               >
                 All
               </button>
@@ -94,7 +96,7 @@ export function ProductsPage() {
                   key={category.id}
                   type="button"
                   className={`whitespace-nowrap rounded-full px-3 py-2 text-[11px] font-bold ${selectedCategory === category.id ? 'bg-brand-600 text-white' : 'bg-white text-soft-600 shadow-sm'}`}
-                  onClick={() => navigate(`/products?category=${category.id}`)}
+                  onClick={() => navigate(`/customer/products?category=${category.id}`)}
                 >
                   {category.name}
                 </button>
@@ -103,7 +105,7 @@ export function ProductsPage() {
 
             <div className="grid grid-cols-2 gap-3">
               {filteredProducts.map((product) => (
-                <ProductCard key={product.id} product={product} onAdd={() => navigate(`/products/${product.id}`)} />
+                <ProductCard key={product.id} product={product} onAdd={() => (product.inStock ? addToCart(product.id, 1) : navigate(`/customer/products/${product.id}`))} />
               ))}
             </div>
           </div>

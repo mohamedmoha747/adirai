@@ -1,7 +1,7 @@
 import { MessageSquare, Phone, ArrowLeft } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { orderStatuses } from '../../data/mockData.js';
-import { AppHeader, OrderStatusTimeline, Footer } from '../../components/UiLibrary.jsx';
+import { AppHeader, OrderStatusTimeline } from '../../components/UiLibrary.jsx';
 
 export function TrackPage() {
   const { orderNumber = 'AM1025' } = useParams();
@@ -12,7 +12,7 @@ export function TrackPage() {
     <div className="am-content">
       {/* Mobile Header */}
       <div className="sticky top-0 z-30 border-b border-soft-200 bg-white md:hidden">
-        <AppHeader title="Order Tracking" onBack={() => navigate('/orders')} />
+        <AppHeader title="Order Tracking" onBack={() => navigate('/customer/orders')} />
       </div>
 
       {/* Desktop Header */}
@@ -20,7 +20,7 @@ export function TrackPage() {
         <div className="am-container py-6">
           <button
             type="button"
-            onClick={() => navigate('/orders')}
+            onClick={() => navigate('/customer/orders')}
             className="mb-4 flex items-center gap-2 text-sm font-semibold text-brand-700 transition hover:text-brand-800"
           >
             <ArrowLeft size={18} />
@@ -139,9 +139,6 @@ export function TrackPage() {
 
       {/* Mobile bottom nav spacing */}
       <div className="h-20 md:hidden" />
-
-      {/* Footer */}
-      <Footer />
     </div>
   );
 }

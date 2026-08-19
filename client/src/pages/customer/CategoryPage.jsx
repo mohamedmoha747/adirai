@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, SlidersHorizontal, ArrowLeft } from 'lucide-react';
 import { categories } from '../../data/mockData.js';
-import { AppHeader, CategoryCard, PromotionalBanner, Footer } from '../../components/UiLibrary.jsx';
+import { AppHeader, CategoryCard, PromotionalBanner } from '../../components/UiLibrary.jsx';
 
 export function CategoryPage() {
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ export function CategoryPage() {
       <div className="sticky top-0 z-30 border-b border-soft-200 bg-white md:hidden">
         <AppHeader
           title="All Categories"
-          onBack={() => navigate('/home')}
+          onBack={() => navigate('/customer/home')}
           rightSlot={
             <button className="grid h-9 w-9 place-items-center rounded-full bg-white text-soft-600 shadow-sm">
               <Search size={18} />
@@ -33,7 +33,7 @@ export function CategoryPage() {
         <div className="am-container py-6">
           <button
             type="button"
-            onClick={() => navigate('/home')}
+            onClick={() => navigate('/customer/home')}
             className="mb-4 flex items-center gap-2 text-sm font-semibold text-brand-700 transition hover:text-brand-800"
           >
             <ArrowLeft size={18} />
@@ -52,7 +52,7 @@ export function CategoryPage() {
                 key={category.id}
                 category={category}
                 selected={selected === category.id}
-                onClick={() => navigate(`/products?category=${category.id}`)}
+                onClick={() => navigate(`/customer/products?category=${category.id}`)}
               />
             ))}
           </div>
@@ -92,7 +92,7 @@ export function CategoryPage() {
                 key={category.id}
                 type="button"
                 className="am-card flex items-center gap-3 p-3 text-left transition hover:shadow-md"
-                onClick={() => navigate(`/products?category=${category.id}`)}
+                onClick={() => navigate(`/customer/products?category=${category.id}`)}
               >
                 <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-[#f6f0ff] text-lg">
                   {category.icon}

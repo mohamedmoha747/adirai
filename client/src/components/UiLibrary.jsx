@@ -15,7 +15,7 @@ export function DesktopHeader() {
           {/* Logo */}
           <button
             type="button"
-            onClick={() => navigate('/home')}
+            onClick={() => navigate('/customer/home')}
             className="flex items-center gap-2"
           >
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-brand-600 to-brand-400 text-sm font-extrabold text-white">
@@ -55,7 +55,7 @@ export function DesktopHeader() {
 
             <button
               type="button"
-              onClick={() => navigate('/cart')}
+              onClick={() => navigate('/customer/cart')}
               className="relative flex h-10 w-10 items-center justify-center rounded-full text-soft-600 transition hover:bg-soft-100"
             >
               <ShoppingBag size={20} />
@@ -66,7 +66,7 @@ export function DesktopHeader() {
 
             <button
               type="button"
-              onClick={() => navigate('/profile')}
+              onClick={() => navigate('/customer/profile')}
               className="flex h-10 w-10 items-center justify-center rounded-full bg-soft-100 text-soft-600 transition hover:bg-soft-200"
             >
               <User size={20} />
@@ -273,32 +273,48 @@ export function PriceDisplay({ amount, size = 'base' }) {
   return <span className={cn('font-extrabold text-ink', size === 'lg' ? 'text-xl' : 'text-sm')}>₹{amount}</span>;
 }
 
-export function AddressCard({ address, selected = false, onSelect, onEdit }) {
+export function AddressCard({ address, selected = false, onSelect, onEdit, onDelete, onSetDefault }) {
   return (
-    <div className={cn('am-card p-3', selected && 'border-brand-200 bg-[#f8f3ff]')}>
+    <div className={cn('am-card p-3', selected && 'border-brand-300 bg-[#f8f3ff] ring-1 ring-brand-200')}>
       <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <span className={cn('rounded-full px-2 py-1 text-[10px] font-bold uppercase tracking-[0.16em]', selected ? 'bg-brand-600 text-white' : 'bg-soft-100 text-soft-600')}>{address.type}</span>
-          {address.isDefault && <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-brand-600">Default</span>}
+          {address.isDefault && <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-emerald-700">Default</span>}
+          {selected && !address.isDefault && <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-brand-600">Selected</span>}
         </div>
-        {onEdit && (
-          <button type="button" className="text-[11px] font-bold text-brand-700" onClick={onEdit}>
-            Edit
-          </button>
-        )}
+        <div className="flex items-center gap-2">
+          {onEdit && (
+            <button type="button" className="text-[11px] font-bold text-brand-700 hover:underline" onClick={onEdit}>
+              Edit
+            </button>
+          )}
+          {onDelete && (
+            <button type="button" className="text-[11px] font-bold text-rose-600 hover:underline" onClick={onDelete}>
+              Delete
+            </button>
+          )}
+        </div>
       </div>
       <div className="mt-3 flex items-start gap-3">
         <span className="mt-1 rounded-full bg-[#f1ebff] p-2 text-brand-700"><MapPin size={14} /></span>
         <div className="flex-1 text-sm text-soft-600">
           <p className="font-extrabold text-ink">{address.name}</p>
           <p className="mt-1">{address.line1}</p>
-          <p>{address.line2}</p>
+          <p>{[address.area, address.city, address.state].filter(Boolean).join(', ')}</p>
+          <p>{address.pincode}</p>
           <p className="mt-1 text-soft-500">{address.phone}</p>
         </div>
       </div>
-      <button type="button" onClick={onSelect} className={cn('mt-3 w-full rounded-full px-3 py-2 text-sm font-semibold', selected ? 'bg-brand-600 text-white' : 'bg-soft-100 text-soft-700')}>
-        {selected ? 'Selected' : 'Select address'}
-      </button>
+      <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+        <button type="button" onClick={onSelect} className={cn('flex-1 rounded-full px-3 py-2 text-sm font-semibold transition', selected ? 'bg-brand-600 text-white' : 'bg-soft-100 text-soft-700 hover:bg-soft-200')}>
+          {selected ? 'Selected for delivery' : 'Select address'}
+        </button>
+        {onSetDefault && !address.isDefault && (
+          <button type="button" onClick={onSetDefault} className="rounded-full border border-brand-200 px-3 py-2 text-sm font-semibold text-brand-700 hover:bg-brand-50">
+            Make default
+          </button>
+        )}
+      </div>
     </div>
   );
 }

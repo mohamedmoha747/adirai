@@ -1,10 +1,12 @@
 import { Bell, MapPin, Truck, Clock, CheckCircle, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { categories, products } from '../../data/mockData.js';
-import { ProductCard, PromotionalBanner, CategoryCard, FeatureCard, PromoCard, Footer } from '../../components/UiLibrary.jsx';
+import { ProductCard, PromotionalBanner, CategoryCard, FeatureCard, PromoCard } from '../../components/UiLibrary.jsx';
+import { useCart } from '../../context/CartContext.jsx';
 
 export function HomePage() {
   const navigate = useNavigate();
+  const { addToCart } = useCart();
 
   return (
     <div className="am-content">
@@ -57,7 +59,7 @@ export function HomePage() {
             <button
               type="button"
               className="text-sm font-semibold text-brand-700 transition hover:text-brand-800 md:text-base"
-              onClick={() => navigate('/categories')}
+              onClick={() => navigate('/customer/categories')}
             >
               View all →
             </button>
@@ -67,7 +69,7 @@ export function HomePage() {
               <CategoryCard
                 key={category.id}
                 category={category}
-                onClick={() => navigate(`/products?category=${category.id}`)}
+                onClick={() => navigate(`/customer/products?category=${category.id}`)}
               />
             ))}
           </div>
@@ -80,7 +82,7 @@ export function HomePage() {
             <button
               type="button"
               className="text-sm font-semibold text-brand-700 transition hover:text-brand-800 md:text-base"
-              onClick={() => navigate('/products')}
+              onClick={() => navigate('/customer/products')}
             >
               View all →
             </button>
@@ -90,7 +92,7 @@ export function HomePage() {
               <ProductCard
                 key={product.id}
                 product={product}
-                onAdd={() => navigate(`/products/${product.id}`)}
+                onAdd={() => (product.inStock ? addToCart(product.id, 1) : navigate(`/customer/products/${product.id}`))}
               />
             ))}
           </div>
@@ -148,34 +150,6 @@ export function HomePage() {
         {/* Bottom padding for mobile nav */}
         <div className="h-4 md:hidden" />
       </main>
-
-      {/* Footer */}
-      <Footer />
-
-      {/* Mobile Bottom Navigation - only visible on mobile */}
-      <nav className="bottom-nav">
-        <div className="px-2 pb-3 pt-2">
-          <div className="grid grid-cols-5 gap-1 text-center">
-            {[
-              { label: 'Home', icon: '⌂', to: '/home' },
-              { label: 'Categories', icon: '▣', to: '/categories' },
-              { label: 'Cart', icon: '🛒', to: '/cart' },
-              { label: 'Orders', icon: '▤', to: '/orders' },
-              { label: 'Profile', icon: '◉', to: '/profile' },
-            ].map((item) => (
-              <button
-                key={item.label}
-                type="button"
-                className="flex flex-col items-center gap-1 rounded-xl py-2 text-[10px] font-semibold text-soft-500 transition hover:text-brand-700"
-                onClick={() => navigate(item.to)}
-              >
-                <span className={item.to === '/home' ? 'text-brand-700' : 'text-soft-500'}>{item.icon}</span>
-                <span className={item.to === '/home' ? 'text-brand-700' : ''}>{item.label}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-      </nav>
     </div>
   );
 }
