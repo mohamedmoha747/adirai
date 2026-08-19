@@ -106,7 +106,7 @@ export function CategoryPage() {
           </div>
 
           <div className="mt-5">
-            <PromotionalBanner title="Free Delivery" subtitle="On orders above ₹299" />
+            <PromotionalBanner title="Fast Delivery" subtitle="Right to Your Doorstep" />
           </div>
         </div>
       </div>
